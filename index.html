@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Архітектура обчислювальних систем</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        body {
+            /* Використовуємо строгий шрифт для основного тексту та моноширинний для технічних деталей */
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: #0f172a; /* slate-900 */
+            color: #e2e8f0; /* slate-200 */
+        }
+
+        .tech-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        /* Анімації для модального вікна */
+        .modal-enter {
+            opacity: 0;
+            transform: translateY(15px) scale(0.98);
+            transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .modal-enter-active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        
+        /* Стилізація скролбару для наукового стилю */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b; 
+        }
+    </style>
+</head>
+<body class="min-h-screen relative antialiased pb-12 selection:bg-blue-500/30">
+
+    <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-0 left-0 w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+CgkJPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMSIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIvPgoJPC9zdmc+')] opacity-50"></div>
+    </div>
+
+    <main class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <header class="mb-14 border-b border-slate-800 pb-8">
+            <div class="inline-block px-3 py-1 mb-4 rounded-full bg-slate-800/50 border border-slate-700 text-xs font-semibold tracking-wider text-slate-400 uppercase">
+                Навчальний посібник
+            </div>
+            <h1 class="text-3xl md:text-5xl font-bold tracking-tight mb-4 text-slate-100">
+                Архітектура Обчислювальних Систем
+            </h1>
+            <p class="text-slate-400 text-lg max-w-3xl leading-relaxed">
+                Академічний довідник з апаратної інженерії. Дослідження базових компонентів архітектури фон Неймана, принципів їхньої взаємодії, фізичних основ та мікроархітектурних рішень.
+            </p>
+        </header>
+
+        <div id="catalog-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Картки генеруються через JS -->
+        </div>
+    </main>
+
+    <div id="modal-backdrop" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4 sm:p-6 opacity-0 transition-opacity duration-200">
+        
+        <div id="modal-content" class="bg-slate-900 border border-slate-700 rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col modal-enter relative overflow-hidden">
+            
+            <!-- Кнопка закриття -->
+            <button id="close-btn" class="absolute top-5 right-5 text-slate-400 hover:text-white transition-colors bg-slate-800 p-2 rounded-lg z-10 border border-slate-700 hover:bg-slate-700" aria-label="Закрити">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+
+            <!-- Заголовок модального вікна -->
+            <div class="px-8 py-6 border-b border-slate-800 bg-slate-900/50">
+                <div class="flex items-center gap-4">
+                    <div id="modal-icon-container" class="w-14 h-14 rounded-lg flex items-center justify-center border border-slate-700 bg-slate-800 shadow-inner">
+                        <!-- Icon -->
+                    </div>
+                    <div>
+                        <h2 id="modal-title" class="text-2xl font-bold text-slate-100">Заголовок</h2>
+                        <p id="modal-eng-title" class="text-sm font-medium text-slate-400 tech-font mt-1">Eng Title</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Тіло модального вікна (скролиться) -->
+            <div class="p-8 overflow-y-auto flex-1 custom-scrollbar">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    
+                    <!-- Секція: Що це -->
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-2 border-b border-slate-800 pb-2">
+                            <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                            <h3 class="text-lg font-semibold text-slate-200 uppercase tracking-wide text-sm">Призначення (Що це)</h3>
+                        </div>
+                        <p id="modal-what" class="text-slate-300 leading-relaxed text-sm md:text-base text-justify">
+                            Опис...
+                        </p>
+                    </div>
+
+                    <!-- Секція: Як працює -->
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-2 border-b border-slate-800 pb-2">
+                            <div class="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                            <h3 class="text-lg font-semibold text-slate-200 uppercase tracking-wide text-sm">Принцип роботи (Як працює)</h3>
+                        </div>
+                        <p id="modal-how" class="text-slate-300 leading-relaxed text-sm md:text-base text-justify">
+                            Опис...
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const architectureData = [
+            {
+                id: 'cpu',
+                title: 'Центральний процесор',
+                engTitle: 'Central Processing Unit (CPU)',
+                icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>`,
+                what: `Головний обчислювальний пристрій електронно-обчислювальної машини, що являє собою надвелику інтегральну схему (НВІС). Він є "мозком" системи, що інтерпретує та виконує машинні інструкції, які складають комп'ютерні програми, керуючи взаємодією всіх інших підсистем архітектури.`,
+                how: `Працює за циклом фон Неймана: Вибірка (Fetch), Декодування (Decode), Виконання (Execute). Містить Арифметико-логічний пристрій (ALU) для математичних і логічних операцій, блок керування (Control Unit) та набір надшвидкої пам'яті — регістрів і кешу (L1, L2, L3). Сучасні процесори використовують суперскалярну архітектуру, конвеєризацію (pipelining) та передбачення розгалужень (branch prediction) для паралельного виконання декількох інструкцій за один такт генератора синхроімпульсів.`
+            },
+            {
+                id: 'gpu',
+                title: 'Графічний процесор',
+                engTitle: 'Graphics Processing Unit (GPU)',
+                icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M6 8h.01"></path><path d="M10 8h.01"></path><path d="M14 8h.01"></path><path d="M18 8h.01"></path><rect x="6" y="12" width="12" height="4" rx="1"></rect></svg>`,
+                what: `Спеціалізований співпроцесор, архітектура якого оптимізована для високопаралельної обробки великих масивів даних. Спочатку розроблений для рендерингу комп'ютерної графіки (растеризації), сьогодні масово застосовується для наукових розрахунків (GPGPU), навчання нейронних мереж та криптографії завдяки здатності одночасно виконувати тисячі операцій.`,
+                how: `Використовує архітектуру SIMD (Single Instruction, Multiple Data) або SIMT (Single Instruction, Multiple Threads). На відміну від CPU, що має кілька потужних ядер, GPU містить тисячі простіших ALU, згрупованих у потокові мультипроцесори (Streaming Multiprocessors). Оперує власною високошвидкісною відеопам'яттю (VRAM типу GDDR або HBM) з надзвичайно широкою шиною даних (від 128 до 8192 біт), що забезпечує колосальну пропускну здатність для матричних векторних обчислень.`
+            },
+            {
+                id: 'ram',
+                title: 'Оперативна пам\'ять',
+                engTitle: 'Random Access Memory (RAM)',
+                icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="10" rx="2"></rect><path d="M6 7v10"></path><path d="M10 7v10"></path><path d="M14 7v10"></path><path d="M18 7v10"></path><path d="M4 17v2"></path><path d="M8 17v2"></path><path d="M12 17v2"></path><path d="M16 17v2"></path><path d="M20 17v2"></path></svg>`,
+                what: `Енергозалежна (Volatile) пам'ять з довільним доступом, що виступає в ролі робочого простору процесора. Тут тимчасово зберігається виконуваний машинний код поточних програм, а також вхідні, вихідні та проміжні дані обчислень. "Довільний доступ" означає, що час звернення до будь-якої комірки пам'яті є однаковим, незалежно від її фізичного розташування.`,
+                how: `Сучасні ПК використовують DRAM (Dynamic RAM). Кожен біт інформації зберігається у комірці, що складається з одного польового транзистора (MOSFET) та одного мікроконденсатора. Оскільки конденсатор неминуче втрачає заряд (струм витоку), контролер пам'яті повинен періодично зчитувати і перезаписувати дані — процес регенерації (refresh), що відбувається тисячі разів на секунду. Зв'язок з CPU відбувається через високочастотну системну шину з урахуванням затримок сигналу (таймінгів, таких як CAS Latency).`
+            },
+            {
+                id: 'ssd',
+                title: 'Твердотільний накопичувач',
+                engTitle: 'Solid-State Drive (SSD)',
+                icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2"></rect><path d="M10 2v4"></path><path d="M14 2v4"></path><path d="M6 10h12"></path><path d="M6 14h12"></path><path d="M6 18h12"></path><path d="M10 22v-4"></path><path d="M14 22v-4"></path></svg>`,
+                what: `Енергонезалежний (Non-Volatile) пристрій довготривалого зберігання інформації, що не має рухомих механічних частин. Прийшов на зміну магнітним жорстким дискам (HDD), подолавши їх головний недолік — високі затримки доступу через механічне позиціювання головок, забезпечуючи на порядки вищу швидкість читання та запису (IOPs).`,
+                how: `Базується на NAND флеш-пам'яті, що використовує транзистори з плаваючим затвором (Floating-gate MOSFET або Charge Trap), здатні утримувати електрони (а отже, і заряд) роками без живлення. Інтегрований мікроконтролер керує розподілом даних по кристалах пам'яті. Оскільки комірки деградують після певної кількості циклів запису, контролер застосовує складні алгоритми вирівнювання зносу (Wear Leveling) та збирання сміття (Garbage Collection). Найсучасніші SSD використовують протокол NVMe (Non-Volatile Memory Express) поверх шини PCI Express, що мінімізує програмні затримки.`
+            },
+            {
+                id: 'motherboard',
+                title: 'Системна (материнська) плата',
+                engTitle: 'Motherboard / Mainboard',
+                icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line><line x1="3" y1="9" x2="21" y2="9"></line><line x1="3" y1="15" x2="21" y2="15"></line></svg>`,
+                what: `Складна багатошарова друкована плата (PCB, зазвичай 4-8 шарів мідних провідників у текстоліті), яка слугує фізичним та логічним фундаментом обчислювальної системи. Вона забезпечує об'єднання всіх апаратних компонентів в єдину функціональну систему, надаючи їм канали зв'язку (шини) та розподіляючи електричне живлення.`,
+                how: `Головним керуючим елементом є чипсет (набір системної логіки), що відповідає за комунікацію між процесором та периферією. Маршрутизація даних відбувається через інтерфейси різної швидкості (PCIe, SATA, USB). Важливим вузлом є VRM (Voltage Regulator Module) — багатофазний імпульсний перетворювач, який знижує 12V від блоку живлення до ~1-1.3V високої сили струму (іноді понад 100А), необхідних для стабільної роботи процесора. Також плата містить мікросхему енергонезалежної пам'яті з базовою системою введення-виведення (UEFI/BIOS) для первинної ініціалізації апаратури під час POST (Power-On Self-Test).`
+            },
+            {
+                id: 'psu',
+                title: 'Блок живлення',
+                engTitle: 'Power Supply Unit (PSU)',
+                icon: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><circle cx="12" cy="12" r="4"></circle><line x1="12" y1="2" x2="12" y2="4"></line><line x1="12" y1="20" x2="12" y2="22"></line><line x1="20" y1="12" x2="22" y2="12"></line><line x1="2" y1="12" x2="4" y2="12"></line></svg>`,
+                what: `Електромеханічний пристрій, що виконує роль перетворювача електричної енергії. Його головна функція — перетворення змінного струму (AC) побутової електромережі (220/230V, 50Hz) у стабілізовані номінали постійного струму (DC) низької напруги (12V, 5V, 3.3V), які є безпечними та необхідними для живлення мікроелектроніки системи.`,
+                how: `Сучасні блоки живлення є імпульсними (Switched-Mode Power Supply - SMPS). Напруга мережі спочатку випрямляється і згладжується високовольтними конденсаторами. Далі ключові транзистори перетворюють її у високочастотні імпульси (десятки кілогерців), які подаються на високочастотний трансформатор (він значно компактніший за низькочастотні аналоги). Після трансформатора напруга знову випрямляється, проходить через дроселі та фільтрувальні конденсатори для придушення пульсацій (Ripple). Мікросхема ШІМ (Широтно-імпульсної модуляції) зчитує вихідні напруги і динамічно коригує ширину імпульсів для ідеальної стабілізації вольтажу навіть при різких стрибках навантаження процесора чи відеокарти.`
+            }
+        ];
+
+        const grid = document.getElementById('catalog-grid');
+        const modalBackdrop = document.getElementById('modal-backdrop');
+        const modalContent = document.getElementById('modal-content');
+        
+        architectureData.forEach(item => {
+            const card = document.createElement('div');
+            // Суворий академічний стиль карток
+            card.className = "group relative bg-slate-800/40 border border-slate-700/50 rounded-lg p-6 hover:bg-slate-800 hover:border-slate-600 transition-all duration-200 cursor-pointer flex flex-col";
+            card.onclick = () => openModal(item.id);
+            
+            card.innerHTML = `
+                <div class="flex items-start justify-between mb-4">
+                    <div class="w-12 h-12 rounded bg-slate-900 border border-slate-700 flex items-center justify-center group-hover:scale-105 transition-transform">
+                        ${item.icon}
+                    </div>
+                    <div class="opacity-0 group-hover:opacity-100 transition-opacity">
+                        <svg class="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                    </div>
+                </div>
+                <h3 class="text-xl font-bold text-slate-200 mb-1 group-hover:text-blue-400 transition-colors">
+                    ${item.title}
+                </h3>
+                <p class="text-xs text-slate-500 tech-font uppercase tracking-wide mb-4">
+                    ${item.engTitle}
+                </p>
+                <div class="mt-auto">
+                    <p class="text-sm text-slate-400 line-clamp-3">
+                        ${item.what}
+                    </p>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+
+        function openModal(id) {
+            const data = architectureData.find(d => d.id === id);
+            if (!data) return;
+
+            document.getElementById('modal-title').textContent = data.title;
+            document.getElementById('modal-eng-title').textContent = data.engTitle;
+            document.getElementById('modal-what').innerHTML = data.what;
+            document.getElementById('modal-how').innerHTML = data.how;
+            document.getElementById('modal-icon-container').innerHTML = data.icon;
+
+            modalBackdrop.classList.remove('hidden');
+            modalBackdrop.classList.add('flex');
+            
+            // Force reflow
+            void modalBackdrop.offsetWidth;
+            
+            modalBackdrop.classList.remove('opacity-0');
+            modalContent.classList.add('modal-enter-active');
+            
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            modalBackdrop.classList.add('opacity-0');
+            modalContent.classList.remove('modal-enter-active');
+            
+            setTimeout(() => {
+                modalBackdrop.classList.add('hidden');
+                modalBackdrop.classList.remove('flex');
+                document.body.style.overflow = '';
+            }, 200);
+        }
+
+        document.getElementById('close-btn').addEventListener('click', closeModal);
+        
+        modalBackdrop.addEventListener('click', (e) => {
+            if (e.target === modalBackdrop) closeModal();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !modalBackdrop.classList.contains('hidden')) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
